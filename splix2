@@ -833,7 +833,7 @@ do
 				Elements = {};
 				PageAmount = Options.Amount or Options.amount or 5;
 				Dragging = { false, UDim2.new(0, 0, 0, 0) };
-				Name = (Options.Name or Options.name or "reaperhook.ez - sloks roleplay v3");
+				Name = (Options.Name or Options.name or "louise.love - sloks roleplay");
 			};
 			--
 			local UI = Instance.new("ScreenGui", game.CoreGui)
