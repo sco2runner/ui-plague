@@ -1,0 +1,119 @@
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SecurityWarning"
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
+
+-- Full-screen frame (semi-transparent black)
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(1, 0, 1, 0)
+Frame.Position = UDim2.new(0, 0, 0, 0)
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame.BackgroundTransparency = 0.5
+Frame.Parent = ScreenGui
+
+-- Title Text
+local TitleText = Instance.new("TextLabel")
+TitleText.Size = UDim2.new(0.8, 0, 0.1, 0)
+TitleText.Position = UDim2.new(0.1, 0, 0.15, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.TextColor3 = Color3.new(1, 0.2, 0.2)
+TitleText.TextScaled = true
+TitleText.Font = Enum.Font.SourceSansBold
+TitleText.Text = "⚠️SECURITY WARNING⚠️"
+TitleText.Parent = Frame
+
+-- Warning body
+local BodyText = Instance.new("TextLabel")
+BodyText.Size = UDim2.new(0.8, 0, 0.4, 0)
+BodyText.Position = UDim2.new(0.1, 0, 0.28, 0)
+BodyText.BackgroundTransparency = 1
+BodyText.TextColor3 = Color3.new(1, 1, 1)
+BodyText.TextWrapped = true
+BodyText.Font = Enum.Font.SourceSans
+BodyText.TextScaled = false
+BodyText.TextSize = 35
+BodyText.Text = "The current build used by you is under testing phase. Bans may occur while using this product. Server options are very risky. Use with caution."
+BodyText.Parent = Frame
+
+-- Hold Button Frame
+local ButtonFrame = Instance.new("TextButton")
+ButtonFrame.Size = UDim2.new(0.4, 0, 0.08, 0)
+ButtonFrame.Position = UDim2.new(0.3, 0, 0.75, 0)
+ButtonFrame.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+ButtonFrame.BorderSizePixel = 0
+ButtonFrame.Text = ""
+ButtonFrame.Parent = Frame
+ButtonFrame.AutoButtonColor = false
+
+-- Progress bar inside button
+local ProgressBar = Instance.new("Frame")
+ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+ProgressBar.Position = UDim2.new(0, 0, 0, 0)
+ProgressBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+ProgressBar.BorderSizePixel = 0
+ProgressBar.Parent = ButtonFrame
+
+-- Button text
+local ButtonText = Instance.new("TextLabel")
+ButtonText.Size = UDim2.new(1, 0, 1, 0)
+ButtonText.Position = UDim2.new(0, 0, 0, 0)
+ButtonText.BackgroundTransparency = 1
+ButtonText.TextColor3 = Color3.new(1, 1, 1)
+ButtonText.Font = Enum.Font.SourceSansBold
+ButtonText.TextScaled = true
+ButtonText.Text = "I Understand, And I Take the Risk."
+ButtonText.Parent = ButtonFrame
+
+-- Hold logic
+local holdTime = 5
+local holding = false
+local holdProgress = 0
+local accepted = false
+
+local function updateProgress(dt)
+    if holding then
+        holdProgress = holdProgress + dt
+        ProgressBar.Size = UDim2.new(math.clamp(holdProgress/holdTime, 0, 1), 0, 1, 0)
+        if holdProgress >= holdTime and not accepted then
+            accepted = true
+            ScreenGui:Destroy()
+            loadMainScript() -- run main script only after acceptance
+        end
+    else
+        if holdProgress > 0 then
+            holdProgress = math.max(holdProgress - dt*2, 0)
+            ProgressBar.Size = UDim2.new(holdProgress/holdTime, 0, 1, 0)
+        end
+    end
+end
+
+ButtonFrame.MouseButton1Down:Connect(function() holding = true end)
+ButtonFrame.MouseButton1Up:Connect(function() holding = false end)
+RunService.Heartbeat:Connect(updateProgress)
+
+-- ===== MAIN SCRIPT =====
+function loadMainScript()
+    -- ===== BYPASS BEGIN =====
+    if not getgenv().ED_AntiKick then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua", true))()
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+    if obj:IsA("Folder") and string.find(obj.Name, "AlpineAnticheat") then
+        print("Destroying folder:", obj.Name)
+        obj:Destroy()
+    end
+end
+
+        getgenv().ED_AntiKick = {Enabled = true, SendNotifications = false, CheckCaller = false}
+    end
+    -- ===== BYPASS END =====
